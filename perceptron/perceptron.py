@@ -1,5 +1,4 @@
 import numpy as np
-import numpy as np
 import pandas as pd
 
 class Perceptron(object):
@@ -10,37 +9,39 @@ class Perceptron(object):
     """
     def __init__(self, eta=0.01, weights=[]):
         self.eta = eta
-        self.n_iter = n_iter
         self.errors_ =[]
+        self.w_ = weights
 
     # we say how many iterations we want it to go through for the learning process
     def fit(self, X, y, n_iter=1):
 
-        #self.w_ = np.zeros(1 + X.shape[1])
-        #self.errors_ = []
-
-        for _ in range(self.n_iter):
+        for _ in range(n_iter):
             errors = 0
             for xi, target, in zip(X, y):
-                update = self.eta * (target - self.predict(xi))
-                self.w_[1:] += update * xi
-                self.w_[0] += update
+                predicted_value = self.predict(xi)
+                update = self.eta * (target - predicted_value)
+                self.w_ += update * xi
                 errors += int(update != 0.0)
             self.errors_.append(errors)
         return self
 
     def net_input(self, X):
-        return np.dot(X, self.w_[1:]) + self.w_[0]
+        return np.dot(X, self.w_)
 
     def predict(self, X):
         return np.where(self.net_input(X) >= 0.0, 1, -1)
 
-samples = [[-1, -1, -1], [-1, 1, -1], [1, -1, -1], [1, 1, -1]]
-df = pd.DataFrame(samples)
-y = df.iloc[0:4, 2].values
-X = df.iloc[0:4, [0,1]].values
+# We'll implement the logical AND function with a Perceptron
 
-#print(X)
-#print(y)
+samples = pd.DataFrame([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
+biases = pd.DataFrame([[1.0], [1.0], [1.0], [1.0]])
+X = pd.concat([biases, samples], axis=1).values
 
-perceptron = Perceptron(eta=.1)
+y = pd.DataFrame([[-1.0], [-1.0], [-1.0], [1.0]]).iloc[0:4, 0].values
+
+perceptron = Perceptron(eta=.1, weights=[.5, 0.0, 1.0])
+print(perceptron.w_)
+
+perceptron.fit(X, y, 5)
+
+print(perceptron.w_)
