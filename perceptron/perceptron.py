@@ -42,6 +42,8 @@ y = pd.DataFrame([[-1.0], [-1.0], [-1.0], [1.0]]).iloc[0:4, 0].values
 perceptron = Perceptron(eta=.1, weights=[.5, 0.0, 1.0])
 print(perceptron.w_)
 
-perceptron.fit(X, y, 5)
+perceptron.fit(X, y, 3)
+
+#It takes 3 iterations to make the perceptron learn the whole function
 
 print(perceptron.w_)
